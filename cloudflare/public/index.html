@@ -1,12 +1,112 @@
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Hello, World!</title>
-	</head>
-	<body>
-		<h1 id="heading">Hello, World!</h1>
-		<p>This page comes from a static asset stored at `public/index.html` as configured in `wrangler.jsonc`.</p>
-	</body>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interpolator</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Realtime interpolation equation editor">
+    <meta name="keywords" content="interpolator,interpolation,editor,equation,visualization,custom,graph">
+    <meta name="author" content="Juraj Novák">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/ribbons.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+    <link rel="image_src" href="img/icon.png" />
+</head>
+<body>
+
+<img src="img/icon.png" style="display: none;"/>
+
+<div class="box box-placeholder" id="box-placeholder-end" style="display: none; top:310px;"></div>
+<div class="box box-placeholder" id="box-placeholder-start"></div>
+<div class="box" id="box"></div>
+
+<div id="container">
+    <div id="help">
+        <span class="glyphicon glyphicon-remove" onclick="toggleHelpBox()" id="close-help"></span>
+        <h3>Interpolator</h3>
+        <p><i>Realtime interpolation equation WYSIWYG editor</i></p>
+
+        <p>Use JavaScript syntax to create complex equations.</p>
+        <p>Result of equation is evaluated as <b>y</b>
+            (depends on type of visualization: movement = vertical position from X to Y point; scaling = scale X and Y
+            size from 0% to 100%; rotation = degress from 0&deg; to 360&deg;; alpha = opacity from 0% to 100%).
+            Graph can show show <b>y</b> min. -1.0 and max. 2.0</p>
+        <p>Available input variables: <strong>x</strong> = time, <strong>d</strong> = duration</p>
+        You can use all JavaScript Math functions/constants - see list
+        <a href="http://www.w3schools.com/jsref/jsref_obj_math.asp" target="_blank">here</a>.<br />
+        <span class="alert-danger">Use JS math functions without <b>Math.</b></span>!
+
+        <h4>Keyboard shortcuts</h4>
+        <p>Use ALT+ or ALT+SHIFT+ (firefox) or CTRL+ALT+ (mac)</p>
+        <p>
+            <kbd>M</kbd> - movement, <kbd>S</kbd> - scaling, <kbd>R</kbd> - rotation, <kbd>A</kbd> - alpha, <kbd>X</kbd> - stop
+        </p>
+    </div>
+
+    <canvas id="graph" width="500" height="500">
+        Sorry, your browser is not supported.
+    </canvas>
+    <div id="tools">
+        <p><b>Equation <a href="javascript:void(0)" onclick="toggleHelpBox()">(?)</a>:</b></p>
+
+        <div id="editor-parent" class="form-group has-feedback">
+            <div id="editor" class="panel panel-default form-control"></div>
+            <span id="syntax-error-icon" class="glyphicon glyphicon-exclamation-sign form-control-feedback"></span>
+        </div>
+
+        <p>Visualization:<span id="remove-vis" style="display: none">
+            <a href="javascript:void(0)" onclick="setBoxAnim(this)" class="no-underline" accesskey="x"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Stop</a>&nbsp;
+            <a href="javascript:void(0)" onclick="changeAnimMode()" class="no-underline"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span> <span id="anim-mode">Normal mode</span></a>
+        </span></p>
+
+        <div id="visualization-group" class="btn-group">
+            <button type="button" class="btn btn-default" value="1" accesskey="m" onclick="setBoxAnim(this)">Movement</button>
+            <button type="button" class="btn btn-default" value="2" accesskey="s" onclick="setBoxAnim(this)">Scaling</button>
+            <button type="button" class="btn btn-default" value="3" accesskey="r" onclick="setBoxAnim(this)">Rotation</button>
+            <button type="button" class="btn btn-default" value="4" accesskey="a" onclick="setBoxAnim(this)">Alpha</button>
+        </div>
+        <br/><br/>
+
+        <p>Duration:</p>
+
+        <div class="input-group">
+            <input id="delay" class="form-control" type="number" value="2500"/>
+            <span class="input-group-addon">ms</span>
+        </div><br />
+
+        <div class="form-group">
+            <label class="control-label" style="font-weight: normal" for="library">Library:</label>
+            <select onchange="setEquationFromLib()" id="library" class="form-control"></select>
+        </div>
+    </div>
+</div>
+
+<div class="ribbon right grey hidden-xs">
+    <a href="https://github.com/inloop/interpolator">Fork me on GitHub</a>
+</div>
+
+<div class="container">
+    <footer>
+        &copy; 2016, Juraj Novák, <a href="http://inloop.eu/" target="_blank">inloop.eu</a><br>
+        <small>| <a href="http://inloop.github.io/">other projects</a> |</small>
+    </footer>
+</div>
+
+<script src="js/ace/ace.js"></script>
+<script src="js/hidpi-canvas.min.js"></script>
+<script src="js/main.js?v=3"></script>
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-55999525-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+</body>
 </html>
